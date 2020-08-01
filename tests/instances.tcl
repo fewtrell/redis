@@ -86,6 +86,7 @@ proc spawn_instance {type base_port count {conf {}}} {
         }
         puts $cfg "dir ./$dirname"
         puts $cfg "logfile log.txt"
+	puts $cfg "repl-diskless-sync yes"
         # Add additional config files
         foreach directive $conf {
             puts $cfg $directive

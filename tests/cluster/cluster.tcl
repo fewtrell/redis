@@ -128,12 +128,27 @@ proc set_cluster_node_timeout {to} {
 # as a starting point to talk with the cluster.
 proc cluster_write_test {id} {
     set prefix [randstring 20 20 alpha]
+    cluster_write_test_prefix $id $prefix
+}
+
+# Check if the cluster is writable and readable. Use node "id"
+# as a starting point to talk with the cluster.
+proc cluster_write_test_prefix {id prefix} {
     set port [get_instance_attrib redis $id port]
     set cluster [redis_cluster 127.0.0.1:$port]
-    for {set j 0} {$j < 100} {incr j} {
+    for {set j 0} {$j < 10} {incr j} {
         $cluster set key.$j $prefix.$j
     }
-    for {set j 0} {$j < 100} {incr j} {
+    cluster_read_test_prefix $id $prefix
+    $cluster close
+}
+
+# check that values written from cluster_write_test_prefix are
+# still all present and readable
+proc cluster_read_test_prefix {id prefix} {
+    set port [get_instance_attrib redis $id port]
+    set cluster [redis_cluster 127.0.0.1:$port]
+    for {set j 0} {$j < 10} {incr j} {
         assert {[$cluster get key.$j] eq "$prefix.$j"}
     }
     $cluster close

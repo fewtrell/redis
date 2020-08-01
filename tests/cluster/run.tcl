@@ -14,7 +14,6 @@ proc main {} {
     parse_options
     spawn_instance redis $::redis_base_port $::instances_count {
         "cluster-enabled yes"
-        "appendonly yes"
     }
     run_tests
     cleanup
